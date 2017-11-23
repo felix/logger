@@ -8,6 +8,10 @@ import (
 
 type KeyValueWriter struct{}
 
+func NewKeyValueWriter() *KeyValueWriter {
+	return &KeyValueWriter{}
+}
+
 func (kv KeyValueWriter) Write(w *bufio.Writer, m Message) {
 	w.WriteString(m.Time)
 	w.WriteByte(' ')

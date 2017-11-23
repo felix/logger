@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-const defaultTimeFormat = "2006-01-02T15:04:05.000Z0700"
-
 type logger struct {
 	name       string
 	level      Level
@@ -31,7 +29,7 @@ func New(opts *Options) Logger {
 
 	timeFormat := opts.TimeFormat
 	if timeFormat == "" {
-		timeFormat = defaultTimeFormat
+		timeFormat = DefaultTimeFormat
 	}
 
 	level := opts.Level
@@ -49,7 +47,7 @@ func New(opts *Options) Logger {
 
 	l.formatter = opts.Formatter
 	if l.formatter == nil {
-		l.formatter = &KeyValueWriter{}
+		l.formatter = NewKeyValueWriter()
 	}
 
 	return &l
