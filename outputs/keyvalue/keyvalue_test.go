@@ -2,10 +2,7 @@ package keyvalue
 
 import (
 	"bytes"
-	//"fmt"
-	"encoding/json"
 	"github.com/felix/logger"
-	"github.com/google/go-cmp/cmp"
 	"strings"
 	"testing"
 )
@@ -40,8 +37,6 @@ func TestKeyValueWriter(t *testing.T) {
 		logger.Info(tt.in...)
 
 		str := buf.String()
-
-		//fmt.Printf("output => %s\n", str)
 
 		// Chop timestamp
 		dataIdx := strings.IndexByte(str, ' ')

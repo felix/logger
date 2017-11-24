@@ -5,7 +5,8 @@ import (
 	"strconv"
 )
 
-func toString(v interface{}) string {
+// ToString converts interface to string
+func ToString(v interface{}) string {
 	switch c := v.(type) {
 	case string:
 		return c

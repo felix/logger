@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-// KeyValueWriter implementation
+// Writer implementation
 type Writer struct{}
 
 // New creates a new writer
-func Writer() *Writer {
+func New() *Writer {
 	return &Writer{}
 }
 
@@ -28,9 +28,9 @@ func (kv Writer) Write(w *bufio.Writer, m logger.Message) {
 
 	for i := 0; i < len(m.Fields); i = i + 2 {
 		w.WriteByte(' ')
-		w.WriteString(toString(m.Fields[i]))
+		w.WriteString(logger.ToString(m.Fields[i]))
 		w.WriteByte('=')
-		s := toString(m.Fields[i+1])
+		s := logger.ToString(m.Fields[i+1])
 		if strings.ContainsAny(s, " \t\n\r") {
 			w.WriteByte('"')
 			w.WriteString(s)

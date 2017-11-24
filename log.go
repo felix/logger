@@ -76,7 +76,7 @@ func (l logger) Log(lvl Level, args ...interface{}) {
 		offset = 1
 	}
 	for i := offset; i < len(args); i = i + 2 {
-		msg.Fields = append(msg.Fields, toString(args[i]), args[i+1])
+		msg.Fields = append(msg.Fields, ToString(args[i]), args[i+1])
 	}
 
 	l.formatter.Write(l.out, msg)

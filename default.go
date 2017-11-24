@@ -26,6 +26,6 @@ func (dw DefaultWriter) Write(w *bufio.Writer, m Message) {
 
 	for _, f := range m.Fields {
 		w.WriteByte(' ')
-		w.WriteString(toString(f))
+		w.WriteString(ToString(f))
 	}
 }
