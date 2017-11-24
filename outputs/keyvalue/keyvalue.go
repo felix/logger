@@ -1,18 +1,22 @@
-package logger
+package keyvalue
 
 import (
 	"bufio"
 	"fmt"
+	"github.com/felix/logger"
 	"strings"
 )
 
-type KeyValueWriter struct{}
+// KeyValueWriter implementation
+type Writer struct{}
 
-func NewKeyValueWriter() *KeyValueWriter {
-	return &KeyValueWriter{}
+// New creates a new writer
+func Writer() *Writer {
+	return &Writer{}
 }
 
-func (kv KeyValueWriter) Write(w *bufio.Writer, m Message) {
+// Write implements the logger.MessageWriter interface
+func (kv Writer) Write(w *bufio.Writer, m logger.Message) {
 	w.WriteString(m.Time)
 	w.WriteByte(' ')
 	w.WriteString(fmt.Sprintf("[%-5s]", strings.ToUpper(m.Level.String())))

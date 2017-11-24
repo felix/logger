@@ -2,45 +2,39 @@ package logger
 
 import (
 	"bytes"
-	//"fmt"
-	"encoding/json"
-	"github.com/google/go-cmp/cmp"
 	"strings"
 	"testing"
 )
 
-func TestKeyValueWriter(t *testing.T) {
+func TestDefaultWriter(t *testing.T) {
 	var tests = []struct {
 		in  []interface{}
 		out string
 	}{
 		{
 			in:  []interface{}{"test message"},
-			out: "[INFO ] test: message=\"test message\"",
+			out: "[INFO ] test message test message",
 		},
 		{
 			in:  []interface{}{"test message", "name", "me"},
-			out: "[INFO ] test: message=\"test message\" name=me",
+			out: "[INFO ] test message test message name me",
 		},
 		{
 			in:  []interface{}{"test message", "name", "me", "number", 2},
-			out: "[INFO ] test: message=\"test message\" name=me number=2",
+			out: "[INFO ] test message test message name me number 2",
 		},
 	}
 
 	for _, tt := range tests {
 		var buf bytes.Buffer
 		logger := New(&Options{
-			Name:      "test",
-			Output:    &buf,
-			Formatter: NewKeyValueWriter(),
+			Name:   "test",
+			Output: &buf,
 		})
 
 		logger.Info(tt.in...)
 
 		str := buf.String()
-
-		//fmt.Printf("output => %s\n", str)
 
 		// Chop timestamp
 		dataIdx := strings.IndexByte(str, ' ')
@@ -48,50 +42,6 @@ func TestKeyValueWriter(t *testing.T) {
 
 		if rest != tt.out {
 			t.Errorf("Info(%q) => %q, expected %q\n", tt.in, rest, tt.out)
-		}
-	}
-}
-
-func TestJSONWriter(t *testing.T) {
-	var tests = []struct {
-		in  []interface{}
-		out map[string]interface{}
-	}{
-		{
-			in:  []interface{}{"test message"},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "test message"},
-		},
-		{
-			in:  []interface{}{"test message", "name", "me"},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "test message", "name": "me"},
-		},
-		{
-			in:  []interface{}{"test message", "name", "me", "number", 2},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "test message", "name": "me", "number": float64(2)},
-		},
-	}
-
-	for _, tt := range tests {
-		var buf bytes.Buffer
-		logger := New(&Options{
-			Name:      "test",
-			Output:    &buf,
-			Formatter: NewJSONWriter(),
-		})
-
-		logger.Info(tt.in...)
-
-		b := buf.Bytes()
-
-		var raw map[string]interface{}
-		if err := json.Unmarshal(b, &raw); err != nil {
-			t.Fatal(err)
-		}
-
-		delete(raw, "@time")
-
-		if !cmp.Equal(raw, tt.out) {
-			t.Errorf("Info(%q) => %q, expected %q\n", tt.in, raw, tt.out)
 		}
 	}
 }

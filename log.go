@@ -47,7 +47,7 @@ func New(opts *Options) Logger {
 
 	l.formatter = opts.Formatter
 	if l.formatter == nil {
-		l.formatter = NewKeyValueWriter()
+		l.formatter = NewDefaultWriter()
 	}
 
 	return &l
