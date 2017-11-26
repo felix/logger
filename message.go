@@ -1,9 +1,10 @@
 package logger
 
 import (
-	"bufio"
+	"io"
 )
 
+// Message type for writers
 type Message struct {
 	Name   string
 	Time   string
@@ -11,6 +12,7 @@ type Message struct {
 	Fields []interface{}
 }
 
+// MessageWriter interface for writing messages
 type MessageWriter interface {
-	Write(*bufio.Writer, Message)
+	Write(io.Writer, Message)
 }

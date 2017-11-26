@@ -1,9 +1,9 @@
 package keyvalue
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/felix/logger"
+	"io"
 	"strings"
 )
 
@@ -16,27 +16,27 @@ func New() *Writer {
 }
 
 // Write implements the logger.MessageWriter interface
-func (kv Writer) Write(w *bufio.Writer, m logger.Message) {
-	w.WriteString(m.Time)
-	w.WriteByte(' ')
-	w.WriteString(fmt.Sprintf("[%-5s]", strings.ToUpper(m.Level.String())))
+func (kv Writer) Write(w io.Writer, m logger.Message) {
+	prefix := fmt.Sprintf("%s [%-5s]", m.Time, strings.ToUpper(m.Level.String()))
+	io.WriteString(w, prefix)
 	if m.Name != "" {
-		w.WriteByte(' ')
-		w.WriteString(m.Name)
-		w.WriteByte(':')
+		io.WriteString(w, " ")
+		io.WriteString(w, m.Name)
+		io.WriteString(w, ":")
 	}
 
 	for i := 0; i < len(m.Fields); i = i + 2 {
-		w.WriteByte(' ')
-		w.WriteString(logger.ToString(m.Fields[i]))
-		w.WriteByte('=')
+		io.WriteString(w, " ")
+		io.WriteString(w, maybeQuote(logger.ToString(m.Fields[i])))
+		io.WriteString(w, "=")
 		s := logger.ToString(m.Fields[i+1])
-		if strings.ContainsAny(s, " \t\n\r") {
-			w.WriteByte('"')
-			w.WriteString(s)
-			w.WriteByte('"')
-		} else {
-			w.WriteString(s)
-		}
+		io.WriteString(w, maybeQuote(s))
 	}
+}
+
+func maybeQuote(s string) string {
+	if strings.ContainsAny(s, " \t\n\r") {
+		return fmt.Sprintf("%q", s)
+	}
+	return s
 }

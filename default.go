@@ -1,8 +1,8 @@
 package logger
 
 import (
-	"bufio"
 	"fmt"
+	"io"
 	"strings"
 )
 
@@ -15,17 +15,17 @@ func NewDefaultWriter() *DefaultWriter {
 }
 
 // Write implements the logger.MessageWriter interface
-func (dw DefaultWriter) Write(w *bufio.Writer, m Message) {
-	w.WriteString(m.Time)
-	w.WriteByte(' ')
-	w.WriteString(fmt.Sprintf("[%-5s]", strings.ToUpper(m.Level.String())))
+func (dw DefaultWriter) Write(w io.Writer, m Message) {
+	prefix := fmt.Sprintf("%s [%-5s]", m.Time, strings.ToUpper(m.Level.String()))
+	io.WriteString(w, prefix)
+
 	if m.Name != "" {
-		w.WriteByte(' ')
-		w.WriteString(m.Name)
+		io.WriteString(w, " ")
+		io.WriteString(w, m.Name)
 	}
 
 	for _, f := range m.Fields {
-		w.WriteByte(' ')
-		w.WriteString(ToString(f))
+		io.WriteString(w, " ")
+		io.WriteString(w, ToString(f))
 	}
 }

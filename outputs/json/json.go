@@ -1,9 +1,9 @@
 package json
 
 import (
-	"bufio"
 	"encoding/json"
 	"github.com/felix/logger"
+	"io"
 )
 
 // Writer implementation
@@ -15,7 +15,7 @@ func New() *Writer {
 }
 
 // Write implements the logger.MessageWriter interface
-func (w Writer) Write(bw *bufio.Writer, m logger.Message) {
+func (w Writer) Write(lw io.Writer, m logger.Message) {
 	vals := map[string]interface{}{
 		"@name":  m.Name,
 		"@level": m.Level.String(),
@@ -26,7 +26,7 @@ func (w Writer) Write(bw *bufio.Writer, m logger.Message) {
 		vals[m.Fields[i].(string)] = m.Fields[i+1]
 	}
 
-	err := json.NewEncoder(bw).Encode(vals)
+	err := json.NewEncoder(lw).Encode(vals)
 	if err != nil {
 		panic(err)
 	}
