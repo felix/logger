@@ -22,8 +22,13 @@ func (w Writer) Write(lw io.Writer, m logger.Message) {
 		"@time":  m.Time,
 	}
 
-	for i := 0; i < len(m.Fields); i = i + 2 {
-		vals[m.Fields[i].(string)] = m.Fields[i+1]
+	offset := len(m.Fields) % 2
+	if offset != 0 {
+		vals["message"] = logger.ToString(m.Fields[0])
+	}
+
+	for i := offset; i < len(m.Fields); i = i + 2 {
+		vals[logger.ToString(m.Fields[i])] = m.Fields[i+1]
 	}
 
 	err := json.NewEncoder(lw).Encode(vals)

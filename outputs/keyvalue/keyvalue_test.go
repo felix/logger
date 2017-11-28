@@ -13,16 +13,20 @@ func TestKeyValueWriter(t *testing.T) {
 		out string
 	}{
 		{
-			in:  []interface{}{"test message"},
-			out: "[INFO ] test: message=\"test message\"",
+			in:  []interface{}{"one"},
+			out: "[INFO ] test: message=one",
 		},
 		{
-			in:  []interface{}{"test message", "name", "me"},
-			out: "[INFO ] test: message=\"test message\" name=me",
+			in:  []interface{}{"one", "two", "2"},
+			out: "[INFO ] test: message=one two=2",
 		},
 		{
-			in:  []interface{}{"test message", "name", "me", "number", 2},
-			out: "[INFO ] test: message=\"test message\" name=me number=2",
+			in:  []interface{}{"one", "two", "2", "three", 3},
+			out: "[INFO ] test: message=one two=2 three=3",
+		},
+		{
+			in:  []interface{}{"one", "two", "2", "three", 3, "fo ur", "# 4"},
+			out: "[INFO ] test: message=one two=2 three=3 \"fo ur\"=\"# 4\"",
 		},
 	}
 

@@ -1,5 +1,6 @@
 package logger
 
+// Logger defines our methods
 type Logger interface {
 	Log(level Level, args ...interface{})
 	Info(args ...interface{})

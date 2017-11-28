@@ -14,16 +14,20 @@ func TestWriter(t *testing.T) {
 		out map[string]interface{}
 	}{
 		{
-			in:  []interface{}{"test message"},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "test message"},
+			in:  []interface{}{"one"},
+			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "one"},
 		},
 		{
-			in:  []interface{}{"test message", "name", "me"},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "test message", "name": "me"},
+			in:  []interface{}{"one", "two", "2"},
+			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "one", "two": "2"},
 		},
 		{
-			in:  []interface{}{"test message", "name", "me", "number", 2},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "test message", "name": "me", "number": float64(2)},
+			in:  []interface{}{"one", "two", "2", "three", 3},
+			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "one", "two": "2", "three": float64(3)},
+		},
+		{
+			in:  []interface{}{"one", "two", "2", "three", 3, "fo ur", "# 4"},
+			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "one", "two": "2", "three": float64(3), "fo ur": "# 4"},
 		},
 	}
 

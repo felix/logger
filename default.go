@@ -20,8 +20,7 @@ func (dw DefaultWriter) Write(w io.Writer, m Message) {
 	io.WriteString(w, prefix)
 
 	if m.Name != "" {
-		io.WriteString(w, " ")
-		io.WriteString(w, m.Name)
+		io.WriteString(w, fmt.Sprintf(" %s:", m.Name))
 	}
 
 	for _, f := range m.Fields {

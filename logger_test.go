@@ -12,23 +12,27 @@ func TestDefaultWriter(t *testing.T) {
 		out string
 	}{
 		{
-			in:  []interface{}{"test message"},
-			out: "[INFO ] test message test message",
+			in:  []interface{}{"one"},
+			out: "[INFO ] testlog: one",
 		},
 		{
-			in:  []interface{}{"test message", "name", "me"},
-			out: "[INFO ] test message test message name me",
+			in:  []interface{}{"one", "two", "2"},
+			out: "[INFO ] testlog: one two 2",
 		},
 		{
-			in:  []interface{}{"test message", "name", "me", "number", 2},
-			out: "[INFO ] test message test message name me number 2",
+			in:  []interface{}{"one", "two", "2", "three", 3},
+			out: "[INFO ] testlog: one two 2 three 3",
+		},
+		{
+			in:  []interface{}{"one", map[string]string{"two": "2", "three": "3"}},
+			out: "[INFO ] testlog: one two 2 three 3",
 		},
 	}
 
 	for _, tt := range tests {
 		var buf bytes.Buffer
 		logger := New(&Options{
-			Name:   "test",
+			Name:   "testlog",
 			Output: &buf,
 		})
 

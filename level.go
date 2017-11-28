@@ -1,13 +1,19 @@
 package logger
 
+// Level defines the logger output level
 type Level int
 
 const (
+	// NoLevel is prior to being defined
 	NoLevel Level = 0
-	Debug   Level = 1
-	Info    Level = 2
-	Warn    Level = 3
-	Error   Level = 4
+	// Debug is for development
+	Debug Level = 1
+	// Info are for interesting runtime events
+	Info Level = 2
+	// Warn is for almost errors
+	Warn Level = 3
+	// Error is a runtime problem
+	Error Level = 4
 )
 
 func (lvl Level) String() string {
