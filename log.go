@@ -96,6 +96,7 @@ func (l logger) Log(lvl Level, args ...interface{}) {
 	}
 
 	l.formatter.Write(l.out, msg)
+	l.out.WriteByte('\n')
 
 	l.out.Flush()
 }
