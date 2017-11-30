@@ -14,19 +14,19 @@ func TestKeyValueWriter(t *testing.T) {
 	}{
 		{
 			in:  []interface{}{"one"},
-			out: "[INFO ] test: message=one",
+			out: "[INFO ] test: message=one\n",
 		},
 		{
 			in:  []interface{}{"one", "two", "2"},
-			out: "[INFO ] test: message=one two=2",
+			out: "[INFO ] test: message=one two=2\n",
 		},
 		{
 			in:  []interface{}{"one", "two", "2", "three", 3},
-			out: "[INFO ] test: message=one two=2 three=3",
+			out: "[INFO ] test: message=one two=2 three=3\n",
 		},
 		{
 			in:  []interface{}{"one", "two", "2", "three", 3, "fo ur", "# 4"},
-			out: "[INFO ] test: message=one two=2 three=3 \"fo ur\"=\"# 4\"",
+			out: "[INFO ] test: message=one two=2 three=3 \"fo ur\"=\"# 4\"\n",
 		},
 	}
 

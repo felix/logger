@@ -24,7 +24,6 @@ func (dw DefaultWriter) Write(w io.Writer, m Message) {
 	}
 
 	for _, f := range m.Fields {
-		io.WriteString(w, " ")
-		io.WriteString(w, ToString(f))
+		io.WriteString(w, fmt.Sprintf(" %s", ToString(f)))
 	}
 }
