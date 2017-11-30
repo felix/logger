@@ -1,4 +1,6 @@
-# logger
+# Simple structured logger for Go
+
+[![Build Status](https://travis-ci.org/felix/logger.svg?branch=master)](https://travis-ci.org/felix/logger)
 
 A simple logger package that provides levels, a number of output formats, and
 named sub-logs.  Output formats include plain text, key/value, JSON and
