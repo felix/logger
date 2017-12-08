@@ -65,6 +65,9 @@ func (l logger) Log(lvl Level, args ...interface{}) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
+	// Place fields at the end
+	args = append(args, l.fields...)
+
 	msg := Message{
 		Name:   l.name,
 		Time:   ts.Format(l.timeFormat),
@@ -72,6 +75,7 @@ func (l logger) Log(lvl Level, args ...interface{}) {
 		Fields: make([]interface{}, 0),
 	}
 
+	// Allow for map arguments
 	for _, f := range args {
 		switch c := f.(type) {
 		case map[string]string:

@@ -1,5 +1,7 @@
 package logger
 
+import "strings"
+
 // Level defines the logger output level
 type Level int
 
@@ -28,5 +30,21 @@ func (lvl Level) String() string {
 		return "error"
 	default:
 		return "unknown"
+	}
+}
+
+// LevelFromString helps select a level
+func LevelFromString(l string) Level {
+	switch strings.ToLower(l) {
+	case "debug":
+		return Debug
+	case "warn":
+		return Warn
+	case "Info":
+		return Info
+	case "Error":
+		return Error
+	default:
+		return NoLevel
 	}
 }
