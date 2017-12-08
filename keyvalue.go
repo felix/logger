@@ -1,22 +1,21 @@
-package keyvalue
+package logger
 
 import (
 	"fmt"
-	"github.com/felix/logger"
 	"io"
 	"strings"
 )
 
-// Writer implementation
-type Writer struct{}
+// DefaultWriter implementation
+type DefaultWriter struct{}
 
 // New creates a new writer
-func New() *Writer {
-	return &Writer{}
+func NewDefaultWriter() *DefaultWriter {
+	return &DefaultWriter{}
 }
 
 // Write implements the logger.MessageWriter interface
-func (kv Writer) Write(w io.Writer, m logger.Message) {
+func (kv DefaultWriter) Write(w io.Writer, m Message) {
 	prefix := fmt.Sprintf("%s [%-5s]", m.Time, strings.ToUpper(m.Level.String()))
 	io.WriteString(w, prefix)
 	if m.Name != "" {
@@ -38,8 +37,8 @@ func (kv Writer) Write(w io.Writer, m logger.Message) {
 func writeKV(k, v interface{}) string {
 	return fmt.Sprintf(
 		" %s=%s",
-		maybeQuote(logger.ToString(k)),
-		maybeQuote(logger.ToString(v)),
+		maybeQuote(ToString(k)),
+		maybeQuote(ToString(v)),
 	)
 }
 
