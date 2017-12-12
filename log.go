@@ -113,10 +113,10 @@ func (l logger) Info(args ...interface{})  { l.Log(Info, args...) }
 
 // Test for current logging level
 func (l logger) IsLevel(lvl Level) bool { return l.level <= lvl }
-func (l *logger) IsDebug() bool         { return l.IsLevel(Debug) }
-func (l *logger) IsInfo() bool          { return l.IsLevel(Info) }
-func (l *logger) IsWarn() bool          { return l.IsLevel(Warn) }
-func (l *logger) IsError() bool         { return l.IsLevel(Error) }
+func (l logger) IsDebug() bool          { return l.IsLevel(Debug) }
+func (l logger) IsInfo() bool           { return l.IsLevel(Info) }
+func (l logger) IsWarn() bool           { return l.IsLevel(Warn) }
+func (l logger) IsError() bool          { return l.IsLevel(Error) }
 
 // WithFields sets the default fields for a new logger
 func (l *logger) WithFields(args ...interface{}) Logger {

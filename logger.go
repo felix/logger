@@ -10,4 +10,8 @@ type Logger interface {
 
 	WithFields(args ...interface{}) Logger
 	Named(name string) Logger
+	IsDebug() bool
+	IsInfo() bool
+	IsWarn() bool
+	IsError() bool
 }

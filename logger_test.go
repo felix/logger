@@ -92,3 +92,23 @@ func TestKeyValueWriterWithFields(t *testing.T) {
 		}
 	}
 }
+
+func TestLevels(t *testing.T) {
+	logger := New(&Options{
+		Name:  "test",
+		Level: Debug,
+	})
+
+	if !logger.IsDebug() {
+		t.Errorf("Level Debug check failed")
+	}
+
+	logger = New(&Options{
+		Name:  "test",
+		Level: Error,
+	})
+
+	if !logger.IsError() {
+		t.Errorf("Level Error check failed")
+	}
+}
