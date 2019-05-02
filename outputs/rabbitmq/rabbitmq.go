@@ -2,11 +2,13 @@ package amqp
 
 import (
 	"encoding/json"
-	"github.com/felix/logger"
-	"github.com/streadway/amqp"
+	"fmt"
 	"io"
 	"strings"
 	"time"
+
+	"github.com/streadway/amqp"
+	"src.userspace.com.au/felix/logger"
 )
 
 // Writer implementation
@@ -108,13 +110,28 @@ func SetRoutingFormat(k string) WriterOpt {
 // Write implements the logger.MessageWriter interface
 func (w Writer) Write(lw io.Writer, m logger.Message) {
 	vals := map[string]interface{}{
-		"@name":  m.Name,
-		"@level": m.Level.String(),
-		"@time":  m.Time,
+		"@name":    m.Name,
+		"@level":   m.Level.String(),
+		"@message": m.Content,
+		"@time":    m.Time,
 	}
 
 	for i := 0; i < len(m.Fields); i = i + 2 {
-		vals[m.Fields[i].(string)] = m.Fields[i+1]
+		vals[logger.ToString(m.Fields[i])] = m.Fields[i+1]
+	}
+
+	if len(m.Extras) > 0 {
+		// Allow for an odd number of extras
+		offset := len(m.Extras) % 2
+		if offset != 0 {
+			for k, v := range m.Extras {
+				vals[fmt.Sprintf("extra%02d", k)] = v
+			}
+		} else {
+			for i := offset; i < len(m.Extras); i = i + 2 {
+				vals[logger.ToString(m.Extras[i])] = m.Extras[i+1]
+			}
+		}
 	}
 
 	d, err := json.Marshal(vals)
@@ -132,14 +149,13 @@ func (w Writer) Write(lw io.Writer, m logger.Message) {
 	routingKey := strings.Replace(w.routingFormat, "{name}", m.Name, 0)
 	routingKey = strings.Replace(w.routingFormat, "{level}", m.Level.String(), 0)
 
-	err = w.channel.Publish(
+	if err := w.channel.Publish(
 		w.exchangeName,
 		routingKey,
 		false, // mandatory
 		false, // immediate
 		msg,
-	)
-	if err != nil {
+	); err != nil {
 		panic(err)
 	}
 }

@@ -1,32 +1,35 @@
 package logger
 
-// Level defines the logger output level
+// Level defines the output level
 type Level int
 
+// Log levels
 const (
-	// NoLevel is prior to being defined
-	NoLevel Level = 0
-	// Debug is for development
-	Debug Level = 1
-	// Info are for interesting runtime events
-	Info Level = 2
-	// Warn is for almost errors
-	Warn Level = 3
-	// Error is a runtime problem
-	Error Level = 4
+	ERROR Level = iota // Wake someone up
+	WARN               // Seomthing failed but don't wake anyone up
+	INFO               // Good to know
+	DEBUG              // Not for production
 )
 
-func (lvl Level) String() string {
-	switch lvl {
+func (l Level) String() string {
+	switch l {
+	case 0:
+		return "error"
 	case 1:
-		return "debug"
+		return "warn"
 	case 2:
 		return "info"
 	case 3:
-		return "warn"
-	case 4:
-		return "error"
+		return "debug"
 	default:
 		return "unknown"
 	}
+}
+
+// Levels is a convenience for string -> level
+var Levels = map[string]Level{
+	"ERROR": ERROR,
+	"WARN":  WARN,
+	"INFO":  INFO,
+	"DEBUG": DEBUG,
 }

@@ -1,63 +1,46 @@
 # Simple structured logger for Go
 
-[![Build Status](https://travis-ci.org/felix/logger.svg?branch=master)](https://travis-ci.org/felix/logger)
-
 A simple logger package that provides levels, a number of output formats, and
-named sub-logs.  Output formats include plain text, key/value, JSON and
-AMQP/RabbitMQ
+named sub-logs.  Output formats include key/value, JSON and AMQP/RabbitMQ
 
 ## Installation
 
-Install using `go get github.com/felix/logger`.
+Install using `go get src.userspace.com.au/felix/logger`.
 
-Documentation is available at http://godoc.org/github.com/felix/logger
+Documentation is available at http://godoc.org/src.userspace.com.au/felix/logger
 
 ## Usage
-
-### Create a normal logger
-
-```go
-log := logger.New(&logger.Options{
-	Name:  "app",
-	Level: logger.Debug,
-})
-log.Error("unable to do anything")
-```
-
-```text
-... [INFO ] app: unable to do anything
-```
 
 ### Create a key/value logger
 
 ```go
-import "github.com/felix/logger/outputs/keyvalue"
+log := logger.New(logger.SetName("app"), logger.SetLevel(logger.DEBUG))
+log.Error("unable to do anything")
+```
 
-log := logger.New(&logger.Options{
-	Name:      "app",
-	Level:     logger.Debug,
-    Formatter: keyvalue.New(),
-})
+```text
+... [info] app: unable to do anything
+```
+
+```go
 log.Warn("invalid something", "id", 344, "error", "generally broken")
 ```
 
-```text
-... [WARN ] app: invalid something id=344 error="generally broken"
-```
+### Add structure
 
 ```text
-... [WARN ] app: invalid something id=344 error="generally broken"
+... [warn] app: invalid something id=344 error="generally broken"
 ```
 
 ### Create a sub-logger
 
 ```go
-sublog := log.Named("database")
+sublog := log.GetNamed("database")
 sublog.Info("connection initialised")
 ```
 
 ```text
-... [INFO ] app.database: connection initialised
+... [info] app.database: connection initialised
 ```
 
 ### Create a new Logger with pre-defined values
@@ -66,15 +49,23 @@ For major sub-systems there is no need to repeat values for each log call:
 
 ```go
 reqID := "555"
-msgLog := sublog.WithFields("request", reqID)
+msgLog := sublog.WithField("request", reqID)
 msgLog.Error("failed to process message")
 ```
 
 ```text
-... [INFO ] app.database: failed to process message request=555
+... [info] app.database: failed to process message request=555
 ```
 
-## Credits
+## Comparison
 
-Solidly based on all the other loggers around, particularly Hashicorp's simple
-hclog with additions and modifications as required.
+```
+goos: darwin
+goarch: amd64
+pkg: src.userspace.com.au/felix/logger
+BenchmarkLocal-12                2000000               660 ns/op
+BenchmarkStdlib-12               5000000               289 ns/op
+BenchmarkLogrus-12               1000000              1744 ns/op
+BenchmarkFieldsLocal-12          1000000              1029 ns/op
+BenchmarkFieldsLogrus-12         1000000              2058 ns/op
+```

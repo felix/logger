@@ -3,9 +3,10 @@ package json
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/felix/logger"
-	"github.com/google/go-cmp/cmp"
+	"reflect"
 	"testing"
+
+	"src.userspace.com.au/felix/logger"
 )
 
 func TestWriter(t *testing.T) {
@@ -15,43 +16,43 @@ func TestWriter(t *testing.T) {
 	}{
 		{
 			in:  []interface{}{"one"},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "one"},
+			out: map[string]interface{}{"@level": "error", "@name": "test", "@message": "msg", "extra00": "one"},
 		},
 		{
-			in:  []interface{}{"one", "two", "2"},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "one", "two": "2"},
+			in:  []interface{}{"one", "1"},
+			out: map[string]interface{}{"@level": "error", "@name": "test", "@message": "msg", "one": "1"},
 		},
 		{
-			in:  []interface{}{"one", "two", "2", "three", 3},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "one", "two": "2", "three": float64(3)},
-		},
-		{
-			in:  []interface{}{"one", "two", "2", "three", 3, "fo ur", "# 4"},
-			out: map[string]interface{}{"@level": "info", "@name": "test", "message": "one", "two": "2", "three": float64(3), "fo ur": "# 4"},
+			in:  []interface{}{"one", "1", "two", "2", "three", 3, "fo ur", "# 4"},
+			out: map[string]interface{}{"@level": "error", "@name": "test", "@message": "msg", "one": "1", "two": "2", "three": float64(3), "fo ur": "# 4"},
 		},
 	}
 
+	var buf bytes.Buffer
+
 	for _, tt := range tests {
-		var buf bytes.Buffer
-		logger := logger.New(&logger.Options{
-			Name:      "test",
-			Output:    &buf,
-			Formatter: New(),
-		})
-
-		logger.Info(tt.in...)
-
-		b := buf.Bytes()
-
-		var raw map[string]interface{}
-		if err := json.Unmarshal(b, &raw); err != nil {
-			t.Fatal(err)
+		l, err := logger.New(
+			logger.SetName("test"),
+			logger.SetOutput(&buf),
+			logger.SetFormatter(New()),
+		)
+		if err != nil {
+			t.Fatalf("New failed: %q", err)
 		}
 
+		l.Error("msg", tt.in...)
+
+		var raw map[string]interface{}
+		if err := json.Unmarshal(buf.Bytes(), &raw); err != nil {
+			t.Fatal(err)
+		}
+		buf.Reset()
+
+		// Ignore time
 		delete(raw, "@time")
 
-		if !cmp.Equal(raw, tt.out) {
-			t.Errorf("Info(%q) => %q, expected %q\n", tt.in, raw, tt.out)
+		if !reflect.DeepEqual(raw, tt.out) {
+			t.Errorf("Error(%q) => %q, expected %q\n", tt.in, raw, tt.out)
 		}
 	}
 }
