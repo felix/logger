@@ -60,12 +60,9 @@ msgLog.Error("failed to process message")
 ## Comparison
 
 ```
-goos: darwin
-goarch: amd64
-pkg: src.userspace.com.au/felix/logger
-BenchmarkLocal-12                2000000               660 ns/op
-BenchmarkStdlib-12               5000000               289 ns/op
-BenchmarkLogrus-12               1000000              1744 ns/op
-BenchmarkFieldsLocal-12          1000000              1029 ns/op
-BenchmarkFieldsLogrus-12         1000000              2058 ns/op
+BenchmarkCoreLogger-12           5000000               288 ns/op
+BenchmarkLocal-12                2000000               654 ns/op
+BenchmarkLogrus-12               1000000              1738 ns/op
+BenchmarkFieldsLocal-12          1000000              1024 ns/op
+BenchmarkFieldsLogrus-12         1000000              2061 ns/op
 ```
