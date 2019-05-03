@@ -27,129 +27,50 @@ func TestLoggerOptions(t *testing.T) {
 	}
 }
 
-func TestDefaultOutput(t *testing.T) {
+func TestLevels(t *testing.T) {
 	tests := []struct {
-		msg      string
-		names    []string
-		fields   []interface{}
-		extras   []interface{}
-		level    message.Level
-		minLevel message.Level
-		expected string
+		min    message.Level
+		level  message.Level
+		output bool
 	}{
-		{
-			msg:      "msg",
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] msg",
-		},
-		{
-			msg: "msg", extras: []interface{}{"one", "two"},
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] msg one=two",
-		},
-		{
-			msg: "msg", extras: []interface{}{"one", "two three"},
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] msg one=\"two three\"",
-		},
-		{
-			// Odd number of extras
-			msg: "msg", extras: []interface{}{"two"},
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] msg extra00=two",
-		},
-		{
-			msg:      "msg",
-			level:    message.INFO,
-			minLevel: message.ERROR,
-			expected: "",
-		},
-		{
-			msg:      "msg",
-			level:    message.INFO,
-			minLevel: message.INFO,
-			expected: "[info] msg",
-		},
-		{
-			msg:      "msg",
-			level:    message.INFO,
-			minLevel: message.DEBUG,
-			expected: "[info] msg",
-		},
-		{
-			msg:      "msg",
-			level:    message.DEBUG,
-			minLevel: message.ERROR,
-			expected: "",
-		},
-		{
-			// Odd number of extras
-			msg: "msg", extras: []interface{}{1},
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] msg extra00=1",
-		},
-		{
-			msg: "msg", extras: []interface{}{"one", 2.23423},
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] msg one=2.23423",
-		},
-		{
-			msg: "msg", extras: []interface{}{"one", 2.23423},
-			fields:   []interface{}{"request", "1234"},
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] msg request=1234 one=2.23423",
-		},
-		{
-			// Odd number of extras
-			msg: "msg", extras: []interface{}{1},
-			names:    []string{"one"},
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] one: msg extra00=1",
-		},
-		{
-			// Odd number of extras
-			msg: "msg", extras: []interface{}{1},
-			names:    []string{"one", "two"},
-			level:    message.ERROR,
-			minLevel: message.ERROR,
-			expected: "[error] one.two: msg extra00=1",
-		},
+		// error
+		{message.ERROR, message.ERROR, true},
+		{message.ERROR, message.WARN, false},
+		{message.ERROR, message.INFO, false},
+		{message.ERROR, message.DEBUG, false},
+		// warn
+		{message.WARN, message.ERROR, true},
+		{message.WARN, message.WARN, true},
+		{message.WARN, message.INFO, false},
+		{message.WARN, message.DEBUG, false},
+		// info
+		{message.INFO, message.ERROR, true},
+		{message.INFO, message.WARN, true},
+		{message.INFO, message.INFO, true},
+		{message.INFO, message.DEBUG, false},
+		// debug
+		{message.DEBUG, message.ERROR, true},
+		{message.DEBUG, message.WARN, true},
+		{message.DEBUG, message.INFO, true},
+		{message.DEBUG, message.DEBUG, true},
 	}
 	var buf bytes.Buffer
 	kv, err := kv.New(kv.SetOutput(&buf))
 	if err != nil {
 		t.Fatal("failed to create keyvalue: ", err)
 	}
+	log, err := New(AddWriter(kv))
+	if err != nil {
+		t.Fatal("failed to create logger: ", err)
+	}
 
-	for _, tt := range tests {
-		log, err := New(AddWriter(kv))
-		if err != nil {
-			t.Fatal("failed to create logger: ", err)
-		}
-		log.SetLevel(tt.minLevel)
-		for _, n := range tt.names {
-			log = log.GetNamed(n)
-		}
-		for i := 0; i < len(tt.fields); i = i + 2 {
-			log.SetField(tt.fields[i].(string), tt.fields[i+1])
-		}
-		log.Log(tt.level, tt.msg, tt.extras...)
+	for i, tt := range tests {
+		log.SetLevel(tt.min)
+		log.Log(tt.level, "test")
 		actual := strings.TrimSpace(buf.String())
 		buf.Reset()
-		// Skip the timestamp etc.
-		if idx := strings.IndexByte(actual, '['); idx > 0 {
-			actual = actual[idx:]
-		}
-		if actual != tt.expected {
-			t.Errorf("Log(%s, %v) => %s, expected %s", tt.level, tt.msg, actual, tt.expected)
+		if (len(actual) > 0) != tt.output {
+			t.Errorf("invalid output for test %d", i)
 		}
 	}
 }

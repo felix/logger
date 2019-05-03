@@ -11,7 +11,7 @@ import (
 )
 
 func TestWriter(t *testing.T) {
-	now := time.Now()
+	now, _ := time.Parse(time.RFC3339, "2019-05-03T13:38:29.987249+10:00")
 	var tests = []struct {
 		in       message.Message
 		expected map[string]interface{}
@@ -23,7 +23,10 @@ func TestWriter(t *testing.T) {
 				Level:   message.ERROR,
 				Content: "msg",
 			},
-			expected: map[string]interface{}{"@level": "error", "@name": "test", "@message": "msg"},
+			expected: map[string]interface{}{
+				"@level": "error", "@name": "test", "@message": "msg",
+				"@time": "2019-05-03T13:38:29.987249+10:00",
+			},
 		},
 		{
 			in: message.Message{
@@ -33,7 +36,10 @@ func TestWriter(t *testing.T) {
 				Content: "msg",
 				Extras:  []interface{}{"one"},
 			},
-			expected: map[string]interface{}{"@level": "error", "@name": "test", "@message": "msg", "extra00": "one"},
+			expected: map[string]interface{}{
+				"@level": "error", "@name": "test", "@message": "msg", "extra00": "one",
+				"@time": "2019-05-03T13:38:29.987249+10:00",
+			},
 		},
 		{
 			in: message.Message{
@@ -43,7 +49,10 @@ func TestWriter(t *testing.T) {
 				Content: "msg",
 				Fields:  map[string]interface{}{"one": "1"},
 			},
-			expected: map[string]interface{}{"@level": "error", "@name": "test", "@message": "msg", "one": "1"},
+			expected: map[string]interface{}{
+				"@level": "error", "@name": "test", "@message": "msg", "one": "1",
+				"@time": "2019-05-03T13:38:29.987249+10:00",
+			},
 		},
 		{
 			in: message.Message{
@@ -52,7 +61,10 @@ func TestWriter(t *testing.T) {
 				Level:   message.ERROR,
 				Content: "msg", Extras: []interface{}{"one", "1", "two", "2", "three", 3, "fo ur", "# 4"},
 			},
-			expected: map[string]interface{}{"@level": "error", "@name": "test", "@message": "msg", "one": "1", "two": "2", "three": float64(3), "fo ur": "# 4"},
+			expected: map[string]interface{}{
+				"@level": "error", "@name": "test", "@message": "msg", "one": "1", "two": "2", "three": float64(3), "fo ur": "# 4",
+				"@time": "2019-05-03T13:38:29.987249+10:00",
+			},
 		},
 		{
 			in: message.Message{
@@ -62,7 +74,10 @@ func TestWriter(t *testing.T) {
 				Content: "msg",
 				Extras:  []interface{}{"one"}, Fields: map[string]interface{}{"f1": "v1"},
 			},
-			expected: map[string]interface{}{"@level": "debug", "@name": "test", "@message": "msg", "f1": "v1", "extra00": "one"},
+			expected: map[string]interface{}{
+				"@level": "debug", "@name": "test", "@message": "msg", "f1": "v1", "extra00": "one",
+				"@time": "2019-05-03T13:38:29.987249+10:00",
+			},
 		},
 	}
 
@@ -80,9 +95,6 @@ func TestWriter(t *testing.T) {
 			t.Fatal(err)
 		}
 		buf.Reset()
-
-		// Ignore time
-		delete(raw, "@time")
 
 		if !reflect.DeepEqual(raw, tt.expected) {
 			t.Errorf("got %q, expected %q\n", raw, tt.expected)
