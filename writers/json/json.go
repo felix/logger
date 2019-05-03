@@ -28,8 +28,8 @@ func (w Writer) Write(m message.Message) {
 		"@message": m.Content,
 	}
 
-	for i := 0; i < len(m.Fields); i = i + 2 {
-		vals[internal.ToString(m.Fields[i])] = m.Fields[i+1]
+	for k, v := range m.Fields {
+		vals[k] = v
 	}
 
 	if len(m.Extras) > 0 {

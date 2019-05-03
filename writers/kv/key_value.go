@@ -31,8 +31,8 @@ func (w Writer) Write(m message.Message) {
 	w.writer.Write([]byte(m.Content))
 
 	// Write fields before extras
-	for i := 0; i < len(m.Fields); i = i + 2 {
-		writeKV(w.writer, m.Fields[i], m.Fields[i+1])
+	for k, v := range m.Fields {
+		writeKV(w.writer, k, v)
 	}
 
 	if len(m.Extras) > 0 {

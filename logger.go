@@ -13,7 +13,7 @@ import (
 type Logger struct {
 	name       string
 	min        message.Level
-	fields     []interface{}
+	fields     map[string]interface{}
 	timeFormat string
 	writers    []message.Writer
 	lock       sync.Mutex
@@ -23,6 +23,7 @@ type Logger struct {
 func New(opts ...Option) (*Logger, error) {
 	l := &Logger{
 		min:        message.ERROR,
+		fields:     make(map[string]interface{}),
 		timeFormat: "2006-01-02T15:04:05.000Z0700",
 	}
 
@@ -109,7 +110,7 @@ func (l *Logger) SetLevel(lvl message.Level) { l.min = lvl }
 
 // SetField enables changing the default fields for a logger instance.
 func (l *Logger) SetField(k string, v interface{}) {
-	l.fields = append(l.fields, k, v)
+	l.fields[k] = v
 }
 
 // SetName enables changing the name for a logger instance.

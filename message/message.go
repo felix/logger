@@ -11,7 +11,7 @@ type Message struct {
 	// The message content
 	Content string
 	// Optional fields for the logger
-	Fields []interface{}
+	Fields map[string]interface{}
 	// Optional extras for this log message
 	Extras []interface{}
 }
