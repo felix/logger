@@ -1,30 +1,22 @@
 package logger
 
 import (
-	"io"
+	"src.userspace.com.au/felix/logger/message"
 )
 
 // An Option configures a logger
 type Option func(*Logger) error
 
-// SetFormatter sets the output formatter for the logger.
-func SetFormatter(f MessageWriter) Option {
+// AddWriter add an output formatter for the logger.
+func AddWriter(f message.Writer) Option {
 	return func(l *Logger) error {
-		l.formatter = f
-		return nil
-	}
-}
-
-// SetOutput sets the output for the logger.
-func SetOutput(w io.Writer) Option {
-	return func(l *Logger) error {
-		l.out = w
+		l.writers = append(l.writers, f)
 		return nil
 	}
 }
 
 // SetLevel configures the minimum level to log.
-func SetLevel(lvl Level) Option {
+func SetLevel(lvl message.Level) Option {
 	return func(l *Logger) error {
 		l.SetLevel(lvl)
 		return nil

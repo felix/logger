@@ -1,10 +1,6 @@
-package logger
+package message
 
-import (
-	"io"
-)
-
-// Message type for implementors of the MessageWriter interface.
+// Message type for implementors of the Writer interface.
 type Message struct {
 	// Optional logger name
 	Name string
@@ -20,7 +16,7 @@ type Message struct {
 	Extras []interface{}
 }
 
-// MessageWriter interface for writing messages.
-type MessageWriter interface {
-	Write(io.Writer, Message)
+// Writer interface for writing messages.
+type Writer interface {
+	Write(Message)
 }

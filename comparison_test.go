@@ -6,7 +6,17 @@ import (
 	"testing"
 
 	logrus "github.com/sirupsen/logrus"
+	"src.userspace.com.au/felix/logger/message"
+	"src.userspace.com.au/felix/logger/writers/kv"
 )
+
+func dummyWriter() message.Writer {
+	kv, err := kv.New(ioutil.Discard)
+	if err != nil {
+		panic("failed to create keyvalue")
+	}
+	return kv
+}
 
 func BenchmarkCoreLogger(b *testing.B) {
 	log.SetOutput(ioutil.Discard)
@@ -16,7 +26,7 @@ func BenchmarkCoreLogger(b *testing.B) {
 }
 
 func BenchmarkLocal(b *testing.B) {
-	l, _ := New(SetOutput(ioutil.Discard))
+	l, _ := New(AddWriter(dummyWriter()))
 	for n := 0; n < b.N; n++ {
 		l.Error("Some text")
 	}
@@ -30,7 +40,7 @@ func BenchmarkLogrus(b *testing.B) {
 }
 
 func BenchmarkFieldsLocal(b *testing.B) {
-	l, _ := New(SetOutput(ioutil.Discard))
+	l, _ := New(AddWriter(dummyWriter()))
 	l.SetField("key", "value")
 	l.SetField("one", "two")
 	for n := 0; n < b.N; n++ {

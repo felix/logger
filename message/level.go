@@ -1,4 +1,4 @@
-package logger
+package message
 
 // Level defines the output level
 type Level int

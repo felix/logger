@@ -29,13 +29,13 @@ func TestWriter(t *testing.T) {
 	}
 
 	var buf bytes.Buffer
+	writer, err := New(&buf)
+	if err != nil {
+		panic(err)
+	}
 
 	for _, tt := range tests {
-		l, err := logger.New(
-			logger.SetName("test"),
-			logger.SetOutput(&buf),
-			logger.SetFormatter(New()),
-		)
+		l, err := logger.New(logger.SetName("test"), logger.AddWriter(writer))
 		if err != nil {
 			t.Fatalf("New failed: %q", err)
 		}
