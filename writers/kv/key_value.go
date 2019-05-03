@@ -3,6 +3,7 @@ package kv
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"src.userspace.com.au/felix/logger/internal"
@@ -11,18 +12,29 @@ import (
 
 // Writer implementation.
 type Writer struct {
-	writer io.Writer
+	timeFormat string
+	writer     io.Writer
 }
 
 // New creates a new Writer writer.
-func New(w io.Writer) (*Writer, error) {
-	return &Writer{writer: w}, nil
+func New(opts ...Option) (*Writer, error) {
+	w := &Writer{
+		timeFormat: "2006-01-02T15:04:05.000Z0700",
+		writer:     os.Stdout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(w); err != nil {
+			return nil, err
+		}
+	}
+	return w, nil
 }
 
 // Write implements the message.Writer interface.
 func (w Writer) Write(m message.Message) {
 	//fmt.Fprintf(w, "%s [%-5s] ", m.Time, m.Level)
-	fmt.Fprintf(w.writer, "%s [%s] ", m.Time, m.Level)
+	fmt.Fprintf(w.writer, "%s [%s] ", m.Time.Format(w.timeFormat), m.Level)
 	if m.Name != "" {
 		fmt.Fprintf(w.writer, "%s: ", m.Name)
 	}

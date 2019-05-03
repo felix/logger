@@ -11,7 +11,7 @@ import (
 )
 
 func dummyWriter() message.Writer {
-	kv, err := kv.New(ioutil.Discard)
+	kv, err := kv.New(kv.SetOutput(ioutil.Discard))
 	if err != nil {
 		panic("failed to create keyvalue")
 	}

@@ -1,11 +1,13 @@
 package message
 
+import "time"
+
 // Message type for implementors of the Writer interface.
 type Message struct {
 	// Optional logger name
 	Name string
 	// The time log() was called
-	Time string
+	Time time.Time
 	// The log level
 	Level Level
 	// The message content

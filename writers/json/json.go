@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 
 	"src.userspace.com.au/felix/logger/internal"
 	"src.userspace.com.au/felix/logger/message"
@@ -11,12 +12,23 @@ import (
 
 // Writer implementation
 type Writer struct {
-	writer io.Writer
+	timeFormat string
+	writer     io.Writer
 }
 
 // New creates a new writer
-func New(w io.Writer) (*Writer, error) {
-	return &Writer{writer: w}, nil
+func New(opts ...Option) (*Writer, error) {
+	w := &Writer{
+		timeFormat: "2006-01-02T15:04:05.000Z0700",
+		writer:     os.Stdout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(w); err != nil {
+			return nil, err
+		}
+	}
+	return w, nil
 }
 
 // Write implements the logger.Writer interface

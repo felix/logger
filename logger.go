@@ -11,20 +11,18 @@ import (
 
 // Logger is a simple levelled logger.
 type Logger struct {
-	name       string
-	min        message.Level
-	fields     map[string]interface{}
-	timeFormat string
-	writers    []message.Writer
-	lock       sync.Mutex
+	name    string
+	min     message.Level
+	fields  map[string]interface{}
+	writers []message.Writer
+	lock    sync.Mutex
 }
 
 // New creates a new logger instance
 func New(opts ...Option) (*Logger, error) {
 	l := &Logger{
-		min:        message.ERROR,
-		fields:     make(map[string]interface{}),
-		timeFormat: "2006-01-02T15:04:05.000Z0700",
+		min:    message.ERROR,
+		fields: make(map[string]interface{}),
 	}
 
 	// Apply variadic options
@@ -34,7 +32,7 @@ func New(opts ...Option) (*Logger, error) {
 
 	// Add default writer
 	if len(l.writers) == 0 {
-		kv, err := kv.New(os.Stderr)
+		kv, err := kv.New(kv.SetOutput(os.Stderr))
 		if err != nil {
 			return nil, err
 		}
@@ -64,7 +62,7 @@ func (l *Logger) Log(lvl message.Level, msg string, args ...interface{}) {
 
 	m := message.Message{
 		Name:    l.name,
-		Time:    time.Now().Format(l.timeFormat),
+		Time:    time.Now(),
 		Level:   lvl,
 		Content: msg,
 		Fields:  l.fields,

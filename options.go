@@ -23,14 +23,6 @@ func SetLevel(lvl message.Level) Option {
 	}
 }
 
-// SetTimeFormat configures the format used for timestamps.
-func SetTimeFormat(f string) Option {
-	return func(l *Logger) error {
-		l.timeFormat = f
-		return nil
-	}
-}
-
 // SetField configures an initial field of the logger.
 func SetField(k string, v interface{}) Option {
 	return func(l *Logger) error {

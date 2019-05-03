@@ -124,7 +124,7 @@ func TestDefaultOutput(t *testing.T) {
 		},
 	}
 	var buf bytes.Buffer
-	kv, err := kv.New(&buf)
+	kv, err := kv.New(kv.SetOutput(&buf))
 	if err != nil {
 		t.Fatal("failed to create keyvalue: ", err)
 	}
