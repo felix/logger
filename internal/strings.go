@@ -31,7 +31,7 @@ func ToString(v interface{}) string {
 	case uint8:
 		return strconv.FormatUint(uint64(c), 10)
 	case float32:
-		return strconv.FormatFloat(float64(c), 'g', -1, 64)
+		return strconv.FormatFloat(float64(c), 'g', -1, 32)
 	case float64:
 		return strconv.FormatFloat(c, 'g', -1, 64)
 	case bool:
