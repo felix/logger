@@ -23,6 +23,14 @@ func SetLevel(lvl message.Level) Option {
 	}
 }
 
+// SetLevelString configures the minimum level to log.
+func SetLevelString(lvl string) Option {
+	return func(l *Logger) error {
+		l.SetLevelString(lvl)
+		return nil
+	}
+}
+
 // SetField configures an initial field of the logger.
 func SetField(k string, v interface{}) Option {
 	return func(l *Logger) error {
