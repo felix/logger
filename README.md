@@ -14,7 +14,7 @@ Documentation is available at http://godoc.org/github.com/felix/logger
 ### Create a key/value logger
 
 ```go
-log := logger.New(logger.SetName("app"), logger.SetLevel(logger.DEBUG))
+log := logger.New(logger.Name("app"), logger.Level(logger.DEBUG))
 log.Error("unable to do anything")
 ```
 
