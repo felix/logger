@@ -10,7 +10,7 @@ import (
 )
 
 func TestLoggerOptions(t *testing.T) {
-	l, err := New(SetLevel(message.INFO))
+	l, err := New(Level(message.INFO))
 	if err != nil {
 		t.Errorf("New() failed: %s", err)
 	}
@@ -18,7 +18,7 @@ func TestLoggerOptions(t *testing.T) {
 		t.Errorf("IsInfo() => %t, expected true", l.IsInfo())
 	}
 
-	err = l.Configure(SetLevel(message.DEBUG))
+	err = l.Configure(Level(message.DEBUG))
 	if err != nil {
 		t.Errorf("Configure() failed: %s", err)
 	}
@@ -59,7 +59,7 @@ func TestLevels(t *testing.T) {
 	if err != nil {
 		t.Fatal("failed to create keyvalue: ", err)
 	}
-	log, err := New(AddWriter(kv))
+	log, err := New(Writer(kv))
 	if err != nil {
 		t.Fatal("failed to create logger: ", err)
 	}

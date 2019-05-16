@@ -26,7 +26,7 @@ func BenchmarkCoreLogger(b *testing.B) {
 }
 
 func BenchmarkLocal(b *testing.B) {
-	l, _ := New(AddWriter(dummyWriter()))
+	l, _ := New(Writer(dummyWriter()))
 	for n := 0; n < b.N; n++ {
 		l.Error("Some text")
 	}
@@ -40,7 +40,7 @@ func BenchmarkLogrus(b *testing.B) {
 }
 
 func BenchmarkFieldsLocal(b *testing.B) {
-	l, _ := New(AddWriter(dummyWriter()))
+	l, _ := New(Writer(dummyWriter()))
 	l.SetField("key", "value")
 	l.SetField("one", "two")
 	for n := 0; n < b.N; n++ {
