@@ -2,6 +2,7 @@ package kv
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 	"time"
 
@@ -73,7 +74,7 @@ func TestWriter(t *testing.T) {
 
 	for _, tt := range tests {
 		l.Write(tt.in)
-		actual := buf.String()
+		actual := strings.TrimSpace(buf.String())
 		buf.Reset()
 
 		if actual != tt.expected {

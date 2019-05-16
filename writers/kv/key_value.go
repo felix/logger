@@ -60,6 +60,7 @@ func (w Writer) Write(m message.Message) {
 			}
 		}
 	}
+	w.writer.Write([]byte{'\n'})
 }
 
 func writeKV(w io.Writer, k, v interface{}) (int, error) {
