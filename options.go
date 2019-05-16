@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"src.userspace.com.au/felix/logger/message"
+	"github.com/felix/logger/message"
 )
 
 // An Option configures a logger

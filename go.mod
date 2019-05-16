@@ -1,4 +1,4 @@
-module src.userspace.com.au/felix/logger
+module github.com/felix/logger
 
 go 1.12
 

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"src.userspace.com.au/felix/logger/message"
+	"github.com/felix/logger/message"
 )
 
 func TestWriter(t *testing.T) {

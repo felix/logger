@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"src.userspace.com.au/felix/logger/internal"
-	"src.userspace.com.au/felix/logger/message"
+	"github.com/felix/logger/internal"
+	"github.com/felix/logger/message"
 )
 
 // Writer implementation
