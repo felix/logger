@@ -5,9 +5,9 @@ import (
 	"log"
 	"testing"
 
-	"github.com/felix/logger/message"
-	"github.com/felix/logger/writers/kv"
 	logrus "github.com/sirupsen/logrus"
+	"src.userspace.com.au/felix/logger/message"
+	"src.userspace.com.au/felix/logger/writers/kv"
 )
 
 func dummyWriter() message.Writer {
