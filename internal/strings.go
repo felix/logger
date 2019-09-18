@@ -3,13 +3,19 @@ package internal
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 // ToString converts interface to string
 func ToString(v interface{}) string {
+	if v == nil {
+		return ""
+	}
 	switch c := v.(type) {
 	case string:
 		return c
+	case *string:
+		return *c
 	case int:
 		return strconv.FormatInt(int64(c), 10)
 	case int64:
@@ -36,6 +42,12 @@ func ToString(v interface{}) string {
 		return strconv.FormatFloat(c, 'g', -1, 64)
 	case bool:
 		return strconv.FormatBool(c)
+	case *bool:
+		return strconv.FormatBool(*c)
+	case *time.Time:
+		return fmt.Sprintf("%s", c)
+	case fmt.Stringer:
+		return c.String()
 	default:
 		return fmt.Sprintf("%v", c)
 	}

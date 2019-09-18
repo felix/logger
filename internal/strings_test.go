@@ -2,9 +2,19 @@ package internal
 
 import (
 	"testing"
+	"time"
 )
 
+type stringer struct{}
+
+func (s stringer) String() string {
+	return "I am a stringer"
+}
+
 func TestToString(t *testing.T) {
+	epoch := time.Date(0, 0, 0, 0, 0, 0, 0, time.UTC)
+	s := "string"
+	b := true
 	tests := []struct {
 		in       interface{}
 		expected string
@@ -25,7 +35,14 @@ func TestToString(t *testing.T) {
 		{uint64(30), "30"},
 		{float32(3.0001), "3.0001"},
 		{float64(3.0000001), "3.0000001"},
-		{nil, "<nil>"},
+		{nil, ""},
+		{new(stringer), "I am a stringer"},
+		{epoch, "-0001-11-30 00:00:00 +0000 UTC"},
+		{struct{ string }{"test"}, "{test}"},
+		// Pointers
+		{&s, "string"},
+		{&epoch, "-0001-11-30 00:00:00 +0000 UTC"},
+		{&b, "true"},
 	}
 
 	for _, tt := range tests {
