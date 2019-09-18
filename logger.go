@@ -15,7 +15,7 @@ type Logger struct {
 	min     message.Level
 	fields  map[string]interface{}
 	writers []message.Writer
-	lock    sync.Mutex
+	lock    *sync.RWMutex
 }
 
 // New creates a new logger instance
@@ -57,8 +57,8 @@ func (l *Logger) Log(lvl message.Level, msg string, args ...interface{}) {
 		return
 	}
 
-	l.lock.Lock()
-	defer l.lock.Unlock()
+	l.lock.RLock()
+	defer l.lock.RUnlock()
 
 	m := message.Message{
 		Name:    l.name,
