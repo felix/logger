@@ -35,7 +35,7 @@ func New(opts ...Option) (*Writer, error) {
 func (w Writer) Write(m message.Message) {
 	vals := map[string]interface{}{
 		"_name":    m.Name,
-		"_time":    m.Time,
+		"_time":    m.Time.Format(w.timeFormat),
 		"_message": m.Content,
 	}
 

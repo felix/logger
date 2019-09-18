@@ -25,7 +25,7 @@ func TestWriter(t *testing.T) {
 			},
 			expected: map[string]interface{}{
 				"_level": "error", "_name": "test", "_message": "msg",
-				"_time": "2019-05-03T13:38:29.987249+10:00",
+				"_time": "2019-05-03T13:38:29.987+1000",
 			},
 		},
 		{
@@ -38,7 +38,7 @@ func TestWriter(t *testing.T) {
 			},
 			expected: map[string]interface{}{
 				"_level": "error", "_name": "test", "_message": "msg", "extra00": "one",
-				"_time": "2019-05-03T13:38:29.987249+10:00",
+				"_time": "2019-05-03T13:38:29.987+1000",
 			},
 		},
 		{
@@ -51,7 +51,7 @@ func TestWriter(t *testing.T) {
 			},
 			expected: map[string]interface{}{
 				"_level": "error", "_name": "test", "_message": "msg", "one": "1",
-				"_time": "2019-05-03T13:38:29.987249+10:00",
+				"_time": "2019-05-03T13:38:29.987+1000",
 			},
 		},
 		{
@@ -63,7 +63,7 @@ func TestWriter(t *testing.T) {
 			},
 			expected: map[string]interface{}{
 				"_level": "error", "_name": "test", "_message": "msg", "one": "1", "two": "2", "three": float64(3), "fo ur": "# 4",
-				"_time": "2019-05-03T13:38:29.987249+10:00",
+				"_time": "2019-05-03T13:38:29.987+1000",
 			},
 		},
 		{
@@ -76,7 +76,7 @@ func TestWriter(t *testing.T) {
 			},
 			expected: map[string]interface{}{
 				"_level": "debug", "_name": "test", "_message": "msg", "f1": "v1", "extra00": "one",
-				"_time": "2019-05-03T13:38:29.987249+10:00",
+				"_time": "2019-05-03T13:38:29.987+1000",
 			},
 		},
 	}
