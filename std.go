@@ -7,7 +7,7 @@ import (
 var std *Logger
 
 func init() {
-	std, _ = New()
+	std, _ = New(Level(message.WARN))
 }
 
 // Error logs an error message.
