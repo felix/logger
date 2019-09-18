@@ -16,14 +16,12 @@ type Writer struct {
 	url           string
 	exchangeName  string
 	routingFormat string
+	exchangeType  string
 	contentType   string
 	passive       bool
 	conn          *amqp.Connection
 	channel       *amqp.Channel
 }
-
-// WriterOpt are options for the client
-type WriterOpt func(*Writer) error
 
 // New creates a new writer
 func New(url, exchange string, opts ...WriterOpt) (*Writer, error) {
@@ -33,14 +31,14 @@ func New(url, exchange string, opts ...WriterOpt) (*Writer, error) {
 		url:           url,
 		exchangeName:  exchange,
 		passive:       false,
+		exchangeType:  "topic",
 		routingFormat: "{name}.{level}",
 		contentType:   "application/json",
 	}
 
 	// Set variadic options passed
 	for _, option := range opts {
-		err = option(w)
-		if err != nil {
+		if err = option(w); err != nil {
 			return nil, err
 		}
 	}
@@ -58,7 +56,7 @@ func New(url, exchange string, opts ...WriterOpt) (*Writer, error) {
 	if w.passive {
 		err = w.channel.ExchangeDeclarePassive(
 			w.exchangeName, // name
-			"topic",        // type
+			w.exchangeType, // type
 			true,           // durable
 			false,          // auto-deleted
 			false,          // internal
@@ -68,7 +66,7 @@ func New(url, exchange string, opts ...WriterOpt) (*Writer, error) {
 	} else {
 		err = w.channel.ExchangeDeclare(
 			w.exchangeName, // name
-			"topic",        // type
+			w.exchangeType, // type
 			true,           // durable
 			false,          // auto-deleted
 			false,          // internal
@@ -81,30 +79,6 @@ func New(url, exchange string, opts ...WriterOpt) (*Writer, error) {
 	}
 
 	return w, nil
-}
-
-// SetContentType sets the content type of messages. Default is "application/json"
-func SetContentType(ct string) WriterOpt {
-	return func(w *Writer) error {
-		w.contentType = ct
-		return nil
-	}
-}
-
-// SetPassive makes logger not create exchanges
-func SetPassive(p bool) WriterOpt {
-	return func(w *Writer) error {
-		w.passive = p
-		return nil
-	}
-}
-
-// SetRoutingFormat sets the format for the routing key. Default is "{name}.{level}"
-func SetRoutingFormat(k string) WriterOpt {
-	return func(w *Writer) error {
-		w.routingFormat = k
-		return nil
-	}
 }
 
 // Write implements the logger.Writer interface
