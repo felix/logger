@@ -1,7 +1,7 @@
 # Simple structured logger for Go
 
 A simple logger package that provides levels, a number of output formats, and
-named sub-logs.  Output formats include key/value, JSON and AMQP/RabbitMQ
+named sub-logs.  Output formats include key/value, JSON, null and AMQP/RabbitMQ
 
 ## Installation
 
@@ -10,6 +10,8 @@ Install using `go get src.userspace.com.au/felix/logger`.
 Documentation is available at http://godoc.org/src.userspace.com.au/felix/logger
 
 ## Usage
+
+There is a package level logger that is set to level 'WARN'.
 
 ### Create a key/value logger
 
@@ -22,20 +24,20 @@ log.Error("unable to do anything")
 ... [info] app: unable to do anything
 ```
 
+### Add structure
+
 ```go
 log.Warn("invalid something", "id", 344, "error", "generally broken")
 ```
-
-### Add structure
 
 ```text
 ... [warn] app: invalid something id=344 error="generally broken"
 ```
 
-### Create a sub-logger
+### Create a named sub-logger
 
 ```go
-sublog := log.GetNamed("database")
+sublog := log.Named("database")
 sublog.Info("connection initialised")
 ```
 
@@ -49,12 +51,23 @@ For major sub-systems there is no need to repeat values for each log call:
 
 ```go
 reqID := "555"
-msgLog := sublog.WithField("request", reqID)
+msgLog := sublog.Field("request", reqID)
 msgLog.Error("failed to process message")
 ```
 
 ```text
 ... [info] app.database: failed to process message request=555
+```
+
+There is also a Log command with no defined level. These messages are always
+printed:
+
+```go
+log.Log("metrics or whatnot", "something", large)
+```
+
+```text
+... metrics or whatnot something="12345678"
 ```
 
 ## Comparison
