@@ -7,7 +7,7 @@ import (
 var std *Logger
 
 func init() {
-	std, _ = New()
+	std, _ = New(Level(message.WARN))
 }
 
 // Error logs an error message.
@@ -34,17 +34,17 @@ func IsInfo() bool { return std.IsInfo() }
 // Use this to conditionally execute blocks of code depending on the log verbosity.
 func IsDebug() bool { return std.IsDebug() }
 
-// SetLevelString enables changing the minimum level for a logger instance.
-func SetLevelString(lvl string) { std.SetLevelString(lvl) }
+// SetLevelAsString enables changing the minimum level for a logger instance.
+func SetLevelAsString(lvl string) { std.SetLevelAsString(lvl) }
 
 // SetLevel enables changing the minimum level for a logger instance.
 func SetLevel(lvl message.Level) { std.SetLevel(lvl) }
 
-// SetField enables changing the default fields for a logger instance.
-func SetField(k string, v interface{}) { std.SetField(k, v) }
+// Field enables changing the default fields for a logger instance.
+func Field(k string, v interface{}) *Logger { return std.Field(k, v) }
 
-// SetName enables changing the name for a logger instance.
-func SetName(n string) { std.SetName(n) }
+// Named creates a new instance of a logger with a new name.
+func Named(n string) *Logger { return std.Named(n) }
 
-// GetNamed creates a new instance of a logger with a new name.
-func GetNamed(n string) *Logger { return std.GetNamed(n) }
+// SetWriter sets the writer for the default logger.
+func SetWriter(w message.Writer) { std.writers = []message.Writer{w} }

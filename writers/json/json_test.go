@@ -24,8 +24,8 @@ func TestWriter(t *testing.T) {
 				Content: "msg",
 			},
 			expected: map[string]interface{}{
-				"@level": "error", "@name": "test", "@message": "msg",
-				"@time": "2019-05-03T13:38:29.987249+10:00",
+				"_level": "error", "_name": "test", "_message": "msg",
+				"_time": "2019-05-03T13:38:29.987249+10:00",
 			},
 		},
 		{
@@ -37,8 +37,8 @@ func TestWriter(t *testing.T) {
 				Extras:  []interface{}{"one"},
 			},
 			expected: map[string]interface{}{
-				"@level": "error", "@name": "test", "@message": "msg", "extra00": "one",
-				"@time": "2019-05-03T13:38:29.987249+10:00",
+				"_level": "error", "_name": "test", "_message": "msg", "extra00": "one",
+				"_time": "2019-05-03T13:38:29.987249+10:00",
 			},
 		},
 		{
@@ -50,8 +50,8 @@ func TestWriter(t *testing.T) {
 				Fields:  map[string]interface{}{"one": "1"},
 			},
 			expected: map[string]interface{}{
-				"@level": "error", "@name": "test", "@message": "msg", "one": "1",
-				"@time": "2019-05-03T13:38:29.987249+10:00",
+				"_level": "error", "_name": "test", "_message": "msg", "one": "1",
+				"_time": "2019-05-03T13:38:29.987249+10:00",
 			},
 		},
 		{
@@ -62,8 +62,8 @@ func TestWriter(t *testing.T) {
 				Content: "msg", Extras: []interface{}{"one", "1", "two", "2", "three", 3, "fo ur", "# 4"},
 			},
 			expected: map[string]interface{}{
-				"@level": "error", "@name": "test", "@message": "msg", "one": "1", "two": "2", "three": float64(3), "fo ur": "# 4",
-				"@time": "2019-05-03T13:38:29.987249+10:00",
+				"_level": "error", "_name": "test", "_message": "msg", "one": "1", "two": "2", "three": float64(3), "fo ur": "# 4",
+				"_time": "2019-05-03T13:38:29.987249+10:00",
 			},
 		},
 		{
@@ -75,8 +75,8 @@ func TestWriter(t *testing.T) {
 				Extras:  []interface{}{"one"}, Fields: map[string]interface{}{"f1": "v1"},
 			},
 			expected: map[string]interface{}{
-				"@level": "debug", "@name": "test", "@message": "msg", "f1": "v1", "extra00": "one",
-				"@time": "2019-05-03T13:38:29.987249+10:00",
+				"_level": "debug", "_name": "test", "_message": "msg", "f1": "v1", "extra00": "one",
+				"_time": "2019-05-03T13:38:29.987249+10:00",
 			},
 		},
 	}

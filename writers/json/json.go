@@ -34,10 +34,13 @@ func New(opts ...Option) (*Writer, error) {
 // Write implements the logger.Writer interface
 func (w Writer) Write(m message.Message) {
 	vals := map[string]interface{}{
-		"@name":    m.Name,
-		"@level":   m.Level.String(),
-		"@time":    m.Time,
-		"@message": m.Content,
+		"_name":    m.Name,
+		"_time":    m.Time,
+		"_message": m.Content,
+	}
+
+	if l := m.Level.String(); l != "" {
+		vals["_level"] = m.Level.String()
 	}
 
 	for k, v := range m.Fields {

@@ -41,8 +41,8 @@ func BenchmarkLogrus(b *testing.B) {
 
 func BenchmarkFieldsLocal(b *testing.B) {
 	l, _ := New(Writer(dummyWriter()))
-	l.SetField("key", "value")
-	l.SetField("one", "two")
+	l.Field("key", "value")
+	l.Field("one", "two")
 	for n := 0; n < b.N; n++ {
 		l.Error("Some text")
 	}

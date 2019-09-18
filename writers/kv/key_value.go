@@ -34,7 +34,10 @@ func New(opts ...Option) (*Writer, error) {
 // Write implements the message.Writer interface.
 func (w Writer) Write(m message.Message) {
 	//fmt.Fprintf(w, "%s [%-5s] ", m.Time, m.Level)
-	fmt.Fprintf(w.writer, "%s [%s] ", m.Time.Format(w.timeFormat), m.Level)
+	fmt.Fprintf(w.writer, "%s ", m.Time.Format(w.timeFormat))
+	if l := m.Level.String(); l != "" {
+		fmt.Fprintf(w.writer, "[%s] ", l)
+	}
 	if m.Name != "" {
 		fmt.Fprintf(w.writer, "%s: ", m.Name)
 	}

@@ -2,6 +2,7 @@ package logger
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -18,9 +19,9 @@ func TestLoggerOptions(t *testing.T) {
 		t.Errorf("IsInfo() => %t, expected true", l.IsInfo())
 	}
 
-	err = l.Configure(Level(message.DEBUG))
+	err = Level(message.DEBUG)(l)
 	if err != nil {
-		t.Errorf("Configure() failed: %s", err)
+		t.Errorf("level option failed: %s", err)
 	}
 	if !l.IsDebug() {
 		t.Errorf("IsDebug() => %t, expected true", l.IsDebug())
@@ -55,7 +56,10 @@ func TestLevels(t *testing.T) {
 		{message.DEBUG, message.DEBUG, true},
 	}
 	var buf bytes.Buffer
-	kv, err := kv.New(kv.SetOutput(&buf))
+	kv, err := kv.New(
+		kv.SetOutput(&buf),
+		kv.SetTimeFormat(""), // Ignore time
+	)
 	if err != nil {
 		t.Fatal("failed to create keyvalue: ", err)
 	}
@@ -66,11 +70,54 @@ func TestLevels(t *testing.T) {
 
 	for i, tt := range tests {
 		log.SetLevel(tt.min)
-		log.Log(tt.level, "test")
+		log.LogAtLevel(tt.level, "test")
 		actual := strings.TrimSpace(buf.String())
 		buf.Reset()
-		if (len(actual) > 0) != tt.output {
-			t.Errorf("invalid output for test %d", i)
+		expected := fmt.Sprintf("[%s] test", tt.level)
+		if (actual == expected) != tt.output {
+			t.Errorf("invalid levelled output for test %d, got %q", i, actual)
+		}
+
+		// Test logging without a level
+		log.Log("test")
+		actual = strings.TrimSpace(buf.String())
+		buf.Reset()
+		if actual != "test" {
+			t.Errorf("invalid Log output for test %d, got %q", i, actual)
+		}
+	}
+}
+
+func TestNamed(t *testing.T) {
+	tests := []struct {
+		existing string
+		name     string
+		expected string
+	}{
+		{"one", "two", "one.two"},
+		{"", "two", "two"},
+		{"one.one.one", "two", "one.one.one.two"},
+	}
+	var buf bytes.Buffer
+	kv, err := kv.New(kv.SetOutput(&buf))
+	if err != nil {
+		t.Fatal("failed to create keyvalue: ", err)
+	}
+	log, err := New(Writer(kv))
+	if err != nil {
+		t.Fatal("failed to create logger: ", err)
+	}
+
+	for _, tt := range tests {
+		log.name = tt.existing
+		named := log.Named(tt.name)
+		named.Error("test")
+
+		actual := buf.String()
+		buf.Reset()
+		expected := fmt.Sprintf("[error] %s: test", tt.expected)
+		if !strings.Contains(actual, expected) {
+			t.Errorf("expected %q got %q", expected, actual)
 		}
 	}
 }

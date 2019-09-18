@@ -21,13 +21,17 @@ type Logger struct {
 // New creates a new logger instance
 func New(opts ...Option) (*Logger, error) {
 	l := &Logger{
-		min:    message.ERROR,
-		fields: make(map[string]interface{}),
+		min:     message.WARN,
+		fields:  make(map[string]interface{}),
+		lock:    new(sync.RWMutex),
+		writers: []message.Writer{},
 	}
 
 	// Apply variadic options
-	if err := l.Configure(opts...); err != nil {
-		return nil, err
+	for _, opt := range opts {
+		if err := opt(l); err != nil {
+			return nil, err
+		}
 	}
 
 	// Add default writer
@@ -36,25 +40,21 @@ func New(opts ...Option) (*Logger, error) {
 		if err != nil {
 			return nil, err
 		}
-		l.writers = append(l.writers, kv)
+		l.writers = []message.Writer{kv}
 	}
 	return l, nil
 }
 
-// Configure applies settings to the logger.
-func (l *Logger) Configure(opts ...Option) error {
-	for _, opt := range opts {
-		if err := opt(l); err != nil {
-			return err
-		}
-	}
-	return nil
+// Log a message with no level.
+func (l *Logger) Log(msg string, args ...interface{}) *Logger {
+	l.LogAtLevel(message.NONE, msg, args...)
+	return l
 }
 
-// Log for a logger instance
-func (l *Logger) Log(lvl message.Level, msg string, args ...interface{}) {
+// LogAtLevel logs a message with a specified level.
+func (l *Logger) LogAtLevel(lvl message.Level, msg string, args ...interface{}) *Logger {
 	if l.min < lvl {
-		return
+		return l
 	}
 
 	l.lock.RLock()
@@ -72,19 +72,28 @@ func (l *Logger) Log(lvl message.Level, msg string, args ...interface{}) {
 	for _, w := range l.writers {
 		w.Write(m)
 	}
+	return l
 }
 
 // Error logs an error message.
-func (l *Logger) Error(msg string, args ...interface{}) { l.Log(message.ERROR, msg, args...) }
+func (l *Logger) Error(msg string, args ...interface{}) *Logger {
+	return l.LogAtLevel(message.ERROR, msg, args...)
+}
 
 // Warn logs an information message.
-func (l *Logger) Warn(msg string, args ...interface{}) { l.Log(message.WARN, msg, args...) }
+func (l *Logger) Warn(msg string, args ...interface{}) *Logger {
+	return l.LogAtLevel(message.WARN, msg, args...)
+}
 
 // Info logs an information message.
-func (l *Logger) Info(msg string, args ...interface{}) { l.Log(message.INFO, msg, args...) }
+func (l *Logger) Info(msg string, args ...interface{}) *Logger {
+	return l.LogAtLevel(message.INFO, msg, args...)
+}
 
 // Debug logs a debug message.
-func (l *Logger) Debug(msg string, args ...interface{}) { l.Log(message.DEBUG, msg, args...) }
+func (l *Logger) Debug(msg string, args ...interface{}) *Logger {
+	return l.LogAtLevel(message.DEBUG, msg, args...)
+}
 
 // IsWarn determines the info status for a logger instance.
 // Use this to conditionally execute blocks of code depending on the log verbosity.
@@ -98,31 +107,34 @@ func (l *Logger) IsInfo() bool { return l.min >= message.INFO }
 // Use this to conditionally execute blocks of code depending on the log verbosity.
 func (l *Logger) IsDebug() bool { return l.min >= message.DEBUG }
 
-// SetLevelString enables changing the minimum level for a logger instance.
-func (l *Logger) SetLevelString(lvl string) {
+// SetLevelAsString enables changing the minimum level for a logger instance.
+func (l *Logger) SetLevelAsString(lvl string) *Logger {
 	l.SetLevel(message.Levels[lvl])
+	return l
 }
 
 // SetLevel enables changing the minimum level for a logger instance.
-func (l *Logger) SetLevel(lvl message.Level) { l.min = lvl }
+func (l *Logger) SetLevel(lvl message.Level) *Logger {
+	l.min = lvl
+	return l
+}
 
-// SetField enables changing the default fields for a logger instance.
-func (l *Logger) SetField(k string, v interface{}) {
+// Field enables changing the default fields for a logger instance.
+func (l *Logger) Field(k string, v interface{}) *Logger {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
 	l.fields[k] = v
+	return l
 }
 
-// SetName enables changing the name for a logger instance.
-func (l *Logger) SetName(n string) {
-	l.name = n
-}
-
-// GetNamed creates a new instance of a logger with a new name.
-func (l *Logger) GetNamed(n string) *Logger {
-	var nl = l
-	if nl.name != "" {
-		nl.SetName(nl.name + "." + n)
+// Named creates a new instance of a logger with a new name.
+func (l *Logger) Named(n string) *Logger {
+	nl := *l
+	if l.name != "" {
+		nl.name = l.name + "." + n
 	} else {
-		nl.SetName(n)
+		nl.name = n
 	}
-	return nl
+	return &nl
 }
