@@ -1,18 +1,12 @@
 
-GOPATH?=	$(HOME)/go
-
 .PHONY: test
 test: lint ## Run tests and create coverage report
-	go test -short -coverprofile=coverage.txt -covermode=atomic ./...
-	go tool cover -html=coverage.txt -o coverage.html
+	go test -short -coverprofile=coverage.txt -covermode=atomic ./... \
+		&& go tool cover -html=coverage.txt -o coverage.html
 
 .PHONY: lint
-lint: $(GOPATH)/bin/golint ## Run the code linter
-	@for file in $$(find . -name 'vendor' -prune -o -type f -name '*.go'); do \
-		golint $$file; done
-
-$(GOPATH)/bin/golint:
-	go get -u golang.org/x/lint/golint
+lint: ## Run the code linter
+	revive ./...
 
 .PHONY: clean
 clean: ## Clean up temp files and binaries
