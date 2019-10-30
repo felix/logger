@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"src.userspace.com.au/felix/logger/message"
+	"src.userspace.com.au/logger/message"
 )
 
 var std *Logger

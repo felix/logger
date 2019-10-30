@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"src.userspace.com.au/felix/logger/message"
-	"src.userspace.com.au/felix/logger/writers/kv"
+	"src.userspace.com.au/logger/message"
+	"src.userspace.com.au/logger/writers/kv"
 )
 
 // Logger is a simple levelled logger.

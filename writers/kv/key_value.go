@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"src.userspace.com.au/felix/logger/internal"
-	"src.userspace.com.au/felix/logger/message"
+	"src.userspace.com.au/logger/internal"
+	"src.userspace.com.au/logger/message"
 )
 
 // Writer implementation.

@@ -5,9 +5,9 @@ named sub-logs.  Output formats include key/value, JSON, null and AMQP/RabbitMQ
 
 ## Installation
 
-Install using `go get src.userspace.com.au/felix/logger`.
+Install using `go get src.userspace.com.au/logger`.
 
-Documentation is available at http://godoc.org/src.userspace.com.au/felix/logger
+Documentation is available at http://godoc.org/src.userspace.com.au/logger
 
 ## Usage
 

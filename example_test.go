@@ -1,9 +1,9 @@
 package logger
 
 import (
-	"src.userspace.com.au/felix/logger/message"
-	"src.userspace.com.au/felix/logger/writers/json"
-	"src.userspace.com.au/felix/logger/writers/kv"
+	"src.userspace.com.au/logger/message"
+	"src.userspace.com.au/logger/writers/json"
+	"src.userspace.com.au/logger/writers/kv"
 )
 
 func ExampleLevel() {
