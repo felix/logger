@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"src.userspace.com.au/felix/logger/message"
+	"src.userspace.com.au/logger/message"
 )
 
 func TestWriter(t *testing.T) {

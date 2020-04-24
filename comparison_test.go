@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	logrus "github.com/sirupsen/logrus"
-	"src.userspace.com.au/felix/logger/message"
-	"src.userspace.com.au/felix/logger/writers/kv"
+	"src.userspace.com.au/logger/message"
+	"src.userspace.com.au/logger/writers/kv"
 )
 
 func dummyWriter() message.Writer {

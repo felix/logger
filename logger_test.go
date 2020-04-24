@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"src.userspace.com.au/felix/logger/message"
-	"src.userspace.com.au/felix/logger/writers/kv"
+	"src.userspace.com.au/logger/message"
+	"src.userspace.com.au/logger/writers/kv"
 )
 
 func TestLoggerOptions(t *testing.T) {
