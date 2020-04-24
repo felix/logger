@@ -2,6 +2,7 @@ package logger
 
 import (
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -109,7 +110,7 @@ func (l *Logger) IsDebug() bool { return l.min >= message.DEBUG }
 
 // SetLevelAsString enables changing the minimum level for a logger instance.
 func (l *Logger) SetLevelAsString(lvl string) *Logger {
-	l.SetLevel(message.Levels[lvl])
+	l.SetLevel(message.Levels[strings.ToUpper(lvl)])
 	return l
 }
 
