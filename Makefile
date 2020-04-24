@@ -1,18 +1,13 @@
 
 .PHONY: test
-test: lint ## Run tests and create coverage report
+test: lint
 	go test -short -coverprofile=coverage.txt -covermode=atomic ./... \
 		&& go tool cover -func=coverage.txt
 
 .PHONY: lint
-lint: ## Run the code linter
-	revive ./...
+lint:
+	go vet ./...
 
 .PHONY: clean
-clean: ## Clean up temp files and binaries
+clean:
 	rm -rf coverage*
-
-.PHONY: help
-help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) |sort \
-		|awk 'BEGIN{FS=":.*?## "};{printf "\033[36m%-30s\033[0m %s\n",$$1,$$2}'
