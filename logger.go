@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"sync"
@@ -10,11 +11,11 @@ import (
 	"src.userspace.com.au/logger/writers/kv"
 )
 
-// Logger is a simple levelled logger.
+// Logger is a simple logger with optional structured.
 type Logger struct {
+	debug   bool
 	name    string
-	min     message.Level
-	fields  map[string]interface{}
+	fields  map[string]string
 	writers []message.Writer
 	lock    *sync.RWMutex
 }
@@ -22,8 +23,8 @@ type Logger struct {
 // New creates a new logger instance
 func New(opts ...Option) (*Logger, error) {
 	l := &Logger{
-		min:     message.WARN,
-		fields:  make(map[string]interface{}),
+		debug:   (os.Getenv("DEBUG") != ""),
+		fields:  make(map[string]string),
 		lock:    new(sync.RWMutex),
 		writers: []message.Writer{},
 	}
@@ -46,28 +47,20 @@ func New(opts ...Option) (*Logger, error) {
 	return l, nil
 }
 
-// Log a message with no level.
-func (l *Logger) Log(msg string, args ...interface{}) *Logger {
-	l.LogAtLevel(message.NONE, msg, args...)
-	return l
+// Log a message.
+func (l *Logger) Log(args ...interface{}) *Logger {
+	return l.log(args...)
 }
 
-// LogAtLevel logs a message with a specified level.
-func (l *Logger) LogAtLevel(lvl message.Level, msg string, args ...interface{}) *Logger {
-	if l.min < lvl {
+func (l *Logger) log(args ...interface{}) *Logger {
+	if len(args) == 0 {
 		return l
 	}
-
-	l.lock.RLock()
-	defer l.lock.RUnlock()
-
 	m := message.Message{
 		Name:    l.name,
 		Time:    time.Now(),
-		Level:   lvl,
-		Content: msg,
+		Content: toString(args...),
 		Fields:  l.fields,
-		Extras:  args,
 	}
 
 	for _, w := range l.writers {
@@ -76,56 +69,67 @@ func (l *Logger) LogAtLevel(lvl message.Level, msg string, args ...interface{}) 
 	return l
 }
 
-// Error logs an error message.
-func (l *Logger) Error(msg string, args ...interface{}) *Logger {
-	return l.LogAtLevel(message.ERROR, msg, args...)
+// toString converts interface to string
+func toString(args ...interface{}) string {
+	var buf strings.Builder
+	last := len(args)
+	for i, a := range args {
+		buf.WriteString(fmt.Sprint(a))
+		if i < last-1 {
+			buf.WriteByte(' ')
+		}
+	}
+	return buf.String()
 }
 
-// Warn logs an information message.
-func (l *Logger) Warn(msg string, args ...interface{}) *Logger {
-	return l.LogAtLevel(message.WARN, msg, args...)
-}
-
-// Info logs an information message.
-func (l *Logger) Info(msg string, args ...interface{}) *Logger {
-	return l.LogAtLevel(message.INFO, msg, args...)
+// Info is an alias for Log.
+func (l *Logger) Info(args ...interface{}) *Logger {
+	return l.log(args...)
 }
 
 // Debug logs a debug message.
-func (l *Logger) Debug(msg string, args ...interface{}) *Logger {
-	return l.LogAtLevel(message.DEBUG, msg, args...)
+func (l *Logger) Debug(args ...interface{}) *Logger {
+	if l.debug {
+		return l.log(args...)
+	}
+	return l
 }
-
-// IsWarn determines the info status for a logger instance.
-// Use this to conditionally execute blocks of code depending on the log verbosity.
-func (l *Logger) IsWarn() bool { return l.min >= message.WARN }
-
-// IsInfo determines the info status for a logger instance.
-// Use this to conditionally execute blocks of code depending on the log verbosity.
-func (l *Logger) IsInfo() bool { return l.min >= message.INFO }
 
 // IsDebug determines the debug status for a logger instance.
 // Use this to conditionally execute blocks of code depending on the log verbosity.
-func (l *Logger) IsDebug() bool { return l.min >= message.DEBUG }
+func (l *Logger) IsDebug() bool { return l.debug }
 
-// SetLevelAsString enables changing the minimum level for a logger instance.
-func (l *Logger) SetLevelAsString(lvl string) *Logger {
-	l.SetLevel(message.Levels[strings.ToUpper(lvl)])
-	return l
-}
-
-// SetLevel enables changing the minimum level for a logger instance.
-func (l *Logger) SetLevel(lvl message.Level) *Logger {
-	l.min = lvl
-	return l
-}
-
-// Field enables changing the default fields for a logger instance.
+// Field enables setting or changing the default fields for a logger instance.
 func (l *Logger) Field(k string, v interface{}) *Logger {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
-	l.fields[k] = v
+	l.fields[k] = toString(v)
+	return l
+}
+
+// Fields enables setting or changing the default fields for a logger instance.
+func (l *Logger) Fields(args ...interface{}) *Logger {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
+	if len(args)%2 != 0 {
+		args = append(args, "")
+	}
+	for i := 0; i < len(args); i += 2 {
+		l.fields[toString(args[i])] = toString(args[i+1])
+	}
+	return l
+}
+
+// FieldMap enables setting or changing the default fields for a logger instance.
+func (l *Logger) FieldMap(f map[string]interface{}) *Logger {
+	l.lock.Lock()
+	defer l.lock.Unlock()
+
+	for k, v := range f {
+		l.fields[k] = toString(v)
+	}
 	return l
 }
 

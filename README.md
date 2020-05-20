@@ -1,6 +1,6 @@
 # Simple structured logger for Go
 
-A simple logger package that provides levels, a number of output formats, and
+A simple logger package that provides a number of output formats, and
 named sub-logs.  Output formats include key/value, JSON, null and AMQP/RabbitMQ
 
 ## Installation
@@ -11,38 +11,38 @@ Documentation is available at http://godoc.org/src.userspace.com.au/logger
 
 ## Usage
 
-There is a package level logger that is set to level 'WARN'.
+There is a package level logger with two levels, debug and not!
 
 ### Create a key/value logger
 
 ```go
-log := logger.New(logger.Name("app"), logger.Level(logger.DEBUG))
-log.Error("unable to do anything")
+log := logger.New(logger.Name("app"))
+log.Log("unable to do anything")
 ```
 
 ```text
-... [info] app: unable to do anything
+... app: unable to do anything
 ```
 
 ### Add structure
 
 ```go
-log.Warn("invalid something", "id", 344, "error", "generally broken")
+log.Log("invalid something", "id", 344, "error", "generally broken")
 ```
 
 ```text
-... [warn] app: invalid something id=344 error="generally broken"
+... app: invalid something id=344 error="generally broken"
 ```
 
 ### Create a named sub-logger
 
 ```go
 sublog := log.Named("database")
-sublog.Info("connection initialised")
+sublog.Log("connection initialised")
 ```
 
 ```text
-... [info] app.database: connection initialised
+... app.database: connection initialised
 ```
 
 ### Create a new Logger with pre-defined values
@@ -52,30 +52,19 @@ For major sub-systems there is no need to repeat values for each log call:
 ```go
 reqID := "555"
 msgLog := sublog.Field("request", reqID)
-msgLog.Error("failed to process message")
+msgLog.Log("failed to process message")
 ```
 
 ```text
-... [info] app.database: failed to process message request=555
-```
-
-There is also a Log command with no defined level. These messages are always
-printed:
-
-```go
-log.Log("metrics or whatnot", "something", large)
-```
-
-```text
-... metrics or whatnot something="12345678"
+... app.database: failed to process message request=555
 ```
 
 ## Comparison
 
 ```
-BenchmarkCoreLogger-12           5000000               288 ns/op
-BenchmarkLocal-12                2000000               654 ns/op
-BenchmarkLogrus-12               1000000              1738 ns/op
-BenchmarkFieldsLocal-12          1000000              1024 ns/op
-BenchmarkFieldsLogrus-12         1000000              2061 ns/op
+BenchmarkCoreLogger-12           4731555               243 ns/op
+BenchmarkLocal-12                2035790               597 ns/op
+BenchmarkLogrus-12                698662              1725 ns/op
+BenchmarkFieldsLocal-12          1000000              1010 ns/op
+BenchmarkFieldsLogrus-12          592014              2022 ns/op
 ```

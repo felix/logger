@@ -8,14 +8,10 @@ type Message struct {
 	Name string
 	// The time log() was called
 	Time time.Time
-	// The log level
-	Level Level
 	// The message content
 	Content string
 	// Optional fields for the logger
-	Fields map[string]interface{}
-	// Optional extras for this log message
-	Extras []interface{}
+	Fields map[string]string
 }
 
 // Writer interface for writing messages.

@@ -19,50 +19,43 @@ func TestWriter(t *testing.T) {
 			in: message.Message{
 				Time:    now,
 				Name:    "test",
-				Level:   message.ERROR,
 				Content: "msg",
 			},
-			expected: "2019-05-03T13:38:29.987+1000 [error] test: msg",
+			expected: "2019-05-03T13:38:29.987+1000 test: msg",
 		},
 		{
 			in: message.Message{
 				Time:    now,
 				Name:    "test",
-				Level:   message.ERROR,
 				Content: "msg",
-				Extras:  []interface{}{"one"},
 			},
-			expected: "2019-05-03T13:38:29.987+1000 [error] test: msg extra00=one",
+			expected: "2019-05-03T13:38:29.987+1000 test: msg",
 		},
 		{
 			in: message.Message{
 				Time:    now,
 				Name:    "test",
-				Level:   message.ERROR,
 				Content: "msg",
-				Fields:  map[string]interface{}{"one": "1"},
+				Fields:  map[string]string{"one": "1"},
 			},
-			expected: "2019-05-03T13:38:29.987+1000 [error] test: msg one=1",
+			expected: "2019-05-03T13:38:29.987+1000 test: msg one=1",
 		},
 		{
 			in: message.Message{
 				Time:    now,
 				Name:    "test",
-				Level:   message.ERROR,
-				Content: "msg", Extras: []interface{}{"one", "1", "two", "2", "three", 3, "fo ur", "# 4"},
+				Content: "msg",
 			},
-			expected: `2019-05-03T13:38:29.987+1000 [error] test: msg one=1 two=2 three=3 "fo ur"="# 4"`,
+			expected: `2019-05-03T13:38:29.987+1000 test: msg`,
 		},
 		{
 			in: message.Message{
 				Time:    now,
 				Name:    "test",
-				Level:   message.DEBUG,
 				Content: "msg",
-				Fields:  map[string]interface{}{"f1": "v1"},
-				Extras:  []interface{}{"one"},
+				Fields:  map[string]string{"f1": "v1"},
 			},
-			expected: "2019-05-03T13:38:29.987+1000 [debug] test: msg f1=v1 extra00=one",
+			expected: "2019-05-03T13:38:29.987+1000 test: msg f1=v1",
 		},
 	}
 

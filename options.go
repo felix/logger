@@ -1,6 +1,8 @@
 package logger
 
 import (
+	"os"
+
 	"src.userspace.com.au/logger/message"
 )
 
@@ -15,18 +17,18 @@ func Writer(f message.Writer) Option {
 	}
 }
 
-// Level configures the minimum level to log.
-func Level(lvl message.Level) Option {
+// ForceDebug sets debug.
+func ForceDebug(b bool) Option {
 	return func(l *Logger) error {
-		l.SetLevel(lvl)
+		l.debug = b
 		return nil
 	}
 }
 
-// LevelAsString configures the minimum level to log.
-func LevelAsString(lvl string) Option {
+// DebugEnvVar sets debug if the envvar 'v' is not empty.
+func DebugEnvVar(v string) Option {
 	return func(l *Logger) error {
-		l.SetLevelAsString(lvl)
+		l.debug = (os.Getenv(v) != "")
 		return nil
 	}
 }

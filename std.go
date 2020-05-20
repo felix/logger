@@ -7,38 +7,18 @@ import (
 var std *Logger
 
 func init() {
-	std, _ = New(Level(message.WARN))
+	std, _ = New()
 }
 
-// Error logs an error message.
-func Error(msg string, args ...interface{}) { std.Error(msg, args...) }
-
-// Warn logs an information message.
-func Warn(msg string, args ...interface{}) { std.Warn(msg, args...) }
-
 // Info logs an information message.
-func Info(msg string, args ...interface{}) { std.Info(msg, args...) }
+func Info(args ...interface{}) { std.Info(args...) }
 
 // Debug logs a debug message.
-func Debug(msg string, args ...interface{}) { std.Debug(msg, args...) }
-
-// IsWarn determines the info status for a logger instance.
-// Use this to conditionally execute blocks of code depending on the log verbosity.
-func IsWarn() bool { return std.IsWarn() }
-
-// IsInfo determines the info status for a logger instance.
-// Use this to conditionally execute blocks of code depending on the log verbosity.
-func IsInfo() bool { return std.IsInfo() }
+func Debug(args ...interface{}) { std.Debug(args...) }
 
 // IsDebug determines the debug status for a logger instance.
 // Use this to conditionally execute blocks of code depending on the log verbosity.
 func IsDebug() bool { return std.IsDebug() }
-
-// SetLevelAsString enables changing the minimum level for a logger instance.
-func SetLevelAsString(lvl string) { std.SetLevelAsString(lvl) }
-
-// SetLevel enables changing the minimum level for a logger instance.
-func SetLevel(lvl message.Level) { std.SetLevel(lvl) }
 
 // Field enables changing the default fields for a logger instance.
 func Field(k string, v interface{}) *Logger { return std.Field(k, v) }

@@ -1,27 +1,28 @@
 package logger
 
 import (
-	"src.userspace.com.au/logger/message"
+	"os"
+
 	"src.userspace.com.au/logger/writers/json"
 	"src.userspace.com.au/logger/writers/kv"
 )
 
-func ExampleLevel() {
+func ExampleDebug() {
 	keyValue, _ := kv.New(kv.SetTimeFormat(""))
+	os.Setenv("DEBUG", "true")
 	log, _ := New(
 		Name("app"),
-		Level(message.DEBUG),
 		Writer(keyValue),
 	)
-	log.Error("unable to do anything")
-	// Output: [error] app: unable to do anything
+	log.Debug("unable to do anything")
+	// Output: app: unable to do anything
 }
 
 func Example_structure() {
 	keyValue, _ := kv.New(kv.SetTimeFormat(""))
 	log, _ := New(Writer(keyValue))
-	log.Warn("invalid something", "id", 344, "error", "generally broken")
-	// Output: [warn] invalid something id=344 error="generally broken"
+	log.Fields("id", 344, "error", "generally broken").Log("invalid something")
+	// Output: invalid something id=344 error="generally broken"
 }
 
 func ExampleNamed() {
@@ -30,8 +31,8 @@ func ExampleNamed() {
 		Name("database"),
 		Writer(keyValue),
 	)
-	log.Error("connection initialised")
-	// Output: [error] database: connection initialised
+	log.Info("connection initialised")
+	// Output: database: connection initialised
 }
 
 func ExampleField() {
@@ -40,14 +41,6 @@ func ExampleField() {
 	// Create a new Logger with pre-defined values
 	reqID := "555"
 	msgLog := log.Field("request", reqID)
-	msgLog.Error("failed to process message")
-	// Output: {"_level":"error","_message":"failed to process message","_name":"app.database","_time":"","request":"555"}
-}
-
-func Example_nolevel() {
-	keyValue, _ := kv.New(kv.SetTimeFormat(""))
-	log, _ := New(Writer(keyValue))
-	large := 12345678
-	log.Log("metrics or whatnot", "something", large)
-	// Output: metrics or whatnot something=12345678
+	msgLog.Log("failed to process message")
+	// Output: {"_message":"failed to process message","_name":"app.database","_time":"","request":"555"}
 }
