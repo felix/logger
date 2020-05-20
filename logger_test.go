@@ -26,6 +26,7 @@ func TestLog(t *testing.T) {
 		expected string
 	}{
 		{[]interface{}{"one", "two"}, "one two"},
+		{[]interface{}{"one", 9}, "one 9"},
 	}
 	var buf bytes.Buffer
 	kv, err := kv.New(kv.SetOutput(&buf))

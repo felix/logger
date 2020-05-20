@@ -15,7 +15,7 @@ func ExampleDebug() {
 		Writer(keyValue),
 	)
 	log.Debug("unable to do anything")
-	// Output: app: unable to do anything
+	// Output: app: unable to do anything source=example_test.go:17
 }
 
 func Example_structure() {

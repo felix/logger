@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -90,9 +91,22 @@ func (l *Logger) Info(args ...interface{}) *Logger {
 // Debug logs a debug message.
 func (l *Logger) Debug(args ...interface{}) *Logger {
 	if l.debug {
-		return l.log(args...)
+		return l.WithSource().log(args...)
 	}
 	return l
+}
+
+// WithSource annotates the log message with the source that called logger.
+func (l *Logger) WithSource() *Logger {
+	_, file, line, ok := runtime.Caller(2)
+	if !ok {
+		file = "<???>"
+		line = 1
+	} else {
+		slash := strings.LastIndex(file, "/")
+		file = file[slash+1:]
+	}
+	return l.Field("source", fmt.Sprintf("%s:%d", file, line))
 }
 
 // IsDebug determines the debug status for a logger instance.
